@@ -8,7 +8,6 @@ Rails.application.routes.draw do
     
     namespace :admin do
       resources :users, only: [:update, :destroy, :index]
-      resources :products, only: [:update, :create, :destroy]
     end
 
     namespace :vendor do

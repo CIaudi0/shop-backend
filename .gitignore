@@ -34,3 +34,10 @@
 /config/*.key
 
 .env
+app/helpers/application_helper.rb
+app/helpers/products_helper.rb
+app/helpers/admin/users_helper.rb
+app/helpers/vendor/products_helper.rb
+app/jobs/application_job.rb
+app/mailers/application_mailer.rb
+config/initializers/content_security_policy.rb
