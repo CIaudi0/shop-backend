@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_12_162107) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_18_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "cart_items", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "product_id", null: false
-    t.integer "quantity"
+    t.integer "quantity", default: 1, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["product_id"], name: "index_cart_items_on_product_id"
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_162107) do
     t.bigint "order_id", null: false
     t.decimal "price"
     t.bigint "product_id", null: false
-    t.integer "quantity"
+    t.integer "quantity", null: false
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_order_items_on_order_id"
     t.index ["product_id"], name: "index_order_items_on_product_id"
@@ -39,7 +39,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_162107) do
     t.jsonb "address"
     t.datetime "created_at", null: false
     t.jsonb "customer"
-    t.jsonb "items"
     t.string "status"
     t.decimal "total"
     t.datetime "updated_at", null: false
@@ -56,6 +55,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_162107) do
     t.string "thumbnail"
     t.string "title"
     t.datetime "updated_at", null: false
+    t.bigint "vendor_id"
+    t.index ["vendor_id"], name: "index_products_on_vendor_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -71,4 +72,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_12_162107) do
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "users"
+  add_foreign_key "products", "users", column: "vendor_id"
 end

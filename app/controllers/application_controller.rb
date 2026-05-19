@@ -1,12 +1,9 @@
-class ApplicationController < ActionController::Base
-  protect_from_forgery with: :null_session 
-  
-  allow_browser versions: :modern
-  
+class ApplicationController < ActionController::API
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   def authenticate_user!
-    header = request.headers['Authorization']
-    token = header.split(' ').last if header
-    
+    token = request.headers['Authorization']&.split(' ', 2)&.last
+
     begin
       decoded = JWT.decode(token, Rails.application.credentials.secret_key_base, true, algorithm: 'HS256').first
       @current_user = User.find(decoded['user_id'])
@@ -20,9 +17,12 @@ class ApplicationController < ActionController::Base
   end
 
   def require_vendor!
-    is_authorized = @current_user&.vendor? || @current_user&.admin?
-    render json: { errors: 'Accesso negato: Solo Venditori' }, status: :forbidden unless is_authorized
+    render json: { errors: 'Accesso negato: Solo Venditori' }, status: :forbidden unless @current_user&.vendor? || @current_user&.admin?
   end
-  
-  stale_when_importmap_changes
+
+  private
+
+  def not_found
+    render json: { errors: 'Risorsa non trovata' }, status: :not_found
+  end
 end

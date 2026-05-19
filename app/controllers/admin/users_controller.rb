@@ -9,21 +9,21 @@ class Admin::UsersController < ApplicationController
 
   def update
     user = User.find(params[:id])
-    
-    if user.update(role: params[:role])
-      render json: { message: 'Ruolo aggiornato', user: user }
-    else
-      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
-    end
+    return render json: { errors: 'Non puoi modificare il tuo ruolo' }, status: :forbidden if user.id == @current_user.id
+
+    user.update!(role: params[:role])
+    render json: { message: 'Ruolo aggiornato', user: user }
+  rescue ArgumentError
+    render json: { errors: "Ruolo non valido: #{params[:role]}" }, status: :unprocessable_entity
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
   end
 
   def destroy
     user = User.find(params[:id])
-    
-    if user.destroy
-      render json: { message: 'Utente eliminato' }
-    else
-      render json: { errors: 'Impossibile eliminare l\'utente' }, status: :unprocessable_entity
-    end
+    return render json: { errors: 'Non puoi eliminare il tuo account' }, status: :forbidden if user.id == @current_user.id
+
+    user.destroy
+    render json: { message: 'Utente eliminato' }
   end
 end
