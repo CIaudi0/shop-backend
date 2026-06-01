@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       post 'add/:product_id', to: 'carts#add_item'
       delete 'remove/:product_id', to: 'carts#remove_item'
       patch 'update/:product_id', to: 'carts#update_item'
+      post 'cart/sync', to: 'carts#sync'
     end
   end
 end

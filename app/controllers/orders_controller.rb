@@ -14,8 +14,8 @@ class OrdersController < ApplicationController
   end
 
   def show
-    order = @current_user.orders.includes(order_items: :product).find(params[:id])
-    render json: order.as_json(include: { order_items: { include: :product } })
+    @order = Current.user.orders.includes(order_items: :product).find(params[:id])
+    render json: @order.as_json(include: { order_items: { include: :product } })
   end
 
   def create
