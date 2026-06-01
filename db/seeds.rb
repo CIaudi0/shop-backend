@@ -6,12 +6,12 @@ User.destroy_all
 # 1. Crea Utente Test
 User.find_or_create_by!(email: 'claudio.astolfi@edu.unife.it') do |u|
   u.name = 'Claudio Astolfi'
-  u.role = 1
+  u.role = :admin
 end
 
 User.find_or_create_by!(email: 'vendor@shop.com') do |u|
   u.name = 'Venditore Pro'
-  u.role = 2
+  u.role = :vendor
 end
 
 User.find_or_create_by!(email: 'user@shop.com') do |u|
@@ -26,7 +26,7 @@ puts "Creati #{User.count} utenti."
 Product.create!([
   {
     title: "MacBook Pro 16",
-    description: "Il MacBook Pro con chip M5 si presenta come un portatile maturo e raffinato, capace di spingere ancora più in alto gli standard già elevati della linea Pro. Le prestazioni fanno un salto deciso grazie al nuovo processore, che offre velocità superiori e una gestione dell’intelligenza artificiale molto più avanzata, pensata per lavorare in locale con rapidità e sicurezza. L’esperienza d’uso risulta fluida anche sotto carichi pesanti, merito della CPU e GPU a 10 core e della memoria unificata ottimizzata per i flussi professionali. Il display Liquid Retina XDR continua a essere uno dei punti di forza, con luminosità elevata e una resa cromatica ideale per chi lavora con contenuti visivi. Nel complesso, è un dispositivo che non rivoluziona il design, ma perfeziona ogni aspetto tecnico per offrire un equilibrio convincente tra potenza, autonomia e qualità costruttiva.",
+    description: "Il MacBook Pro con chip M5 si presenta come un portatile maturo e raffinato, capace di spingere ancora più in alto gli standard già elevati della linea Pro. Le prestazioni fanno un salto deciso grazie al nuovo processore, che offre velocità superiori e una gestione dell'intelligenza artificiale molto più avanzata, pensata per lavorare in locale con rapidità e sicurezza. L'esperienza d'uso risulta fluida anche sotto carichi pesanti, merito della CPU e GPU a 10 core e della memoria unificata ottimizzata per i flussi professionali. Il display Liquid Retina XDR continua a essere uno dei punti di forza, con luminosità elevata e una resa cromatica ideale per chi lavora con contenuti visivi. Nel complesso, è un dispositivo che non rivoluziona il design, ma perfeziona ogni aspetto tecnico per offrire un equilibrio convincente tra potenza, autonomia e qualità costruttiva.",
     price: 2499.00,
     original_price: 2899.00,
     sale: true,

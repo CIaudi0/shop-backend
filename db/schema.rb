@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_18_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -66,11 +66,4 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_000002) do
     t.integer "role", default: 0
     t.datetime "updated_at", null: false
   end
-
-  add_foreign_key "cart_items", "products"
-  add_foreign_key "cart_items", "users"
-  add_foreign_key "order_items", "orders"
-  add_foreign_key "order_items", "products"
-  add_foreign_key "orders", "users"
-  add_foreign_key "products", "users", column: "vendor_id"
 end
