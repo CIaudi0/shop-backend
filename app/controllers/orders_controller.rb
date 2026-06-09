@@ -30,8 +30,21 @@ class OrdersController < ApplicationController
       return render json: { errors: 'Alcuni prodotti non sono più disponibili' }, status: :unprocessable_entity
     end
 
+    stock_error = nil
+
     ActiveRecord::Base.transaction do
-      total = cart_items.sum { |item| item.product.price * item.quantity }
+      product_ids = cart_items.map(&:product_id)
+      locked_products = Product.lock.where(id: product_ids).index_by(&:id)
+
+      cart_items.each do |item|
+        product = locked_products[item.product_id]
+        if product.stock < item.quantity
+          stock_error = "Stock insufficiente per '#{product.title}' (disponibili: #{product.stock})"
+          raise ActiveRecord::Rollback
+        end
+      end
+
+      total = cart_items.sum { |item| locked_products[item.product_id].price * item.quantity }
 
       @order = @current_user.orders.create!(
         customer: params.require(:customer).permit(:firstName, :lastName, :email).to_h,
@@ -41,15 +54,15 @@ class OrdersController < ApplicationController
       )
 
       cart_items.each do |item|
-        @order.order_items.create!(
-          product: item.product,
-          quantity: item.quantity,
-          price: item.product.price
-        )
+        product = locked_products[item.product_id]
+        @order.order_items.create!(product: product, quantity: item.quantity, price: product.price)
+        product.decrement!(:stock, item.quantity)
       end
 
       cart_items.destroy_all
     end
+
+    return render json: { errors: stock_error }, status: :unprocessable_entity if stock_error
 
     render json: @order, status: :created
   rescue ActiveRecord::RecordInvalid => e
@@ -63,12 +76,12 @@ class OrdersController < ApplicationController
     c = params[:customer]
     a = params[:address]
 
-    errors << 'Nome cliente mancante'  if c.blank? || c[:firstName].blank?
+    errors << 'Nome cliente mancante'    if c.blank? || c[:firstName].blank?
     errors << 'Cognome cliente mancante' if c.blank? || c[:lastName].blank?
-    errors << 'Email cliente mancante'  if c.blank? || c[:email].blank?
-    errors << 'Via mancante'            if a.blank? || a[:street].blank?
-    errors << 'Città mancante'          if a.blank? || a[:city].blank?
-    errors << 'CAP mancante'            if a.blank? || a[:zip].blank?
+    errors << 'Email cliente mancante'   if c.blank? || c[:email].blank?
+    errors << 'Via mancante'             if a.blank? || a[:street].blank?
+    errors << 'Città mancante'           if a.blank? || a[:city].blank?
+    errors << 'CAP mancante'             if a.blank? || a[:zip].blank?
 
     errors
   end

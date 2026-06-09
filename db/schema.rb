@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_000002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,11 +52,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000001) do
     t.decimal "original_price"
     t.decimal "price"
     t.boolean "sale"
+    t.integer "stock", default: 0, null: false
     t.string "thumbnail"
     t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "vendor_id"
     t.index ["vendor_id"], name: "index_products_on_vendor_id"
+  end
+
+  create_table "refresh_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["token"], name: "index_refresh_tokens_on_token", unique: true
+    t.index ["user_id"], name: "index_refresh_tokens_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -66,4 +77,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_000001) do
     t.integer "role", default: 0
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "refresh_tokens", "users"
 end

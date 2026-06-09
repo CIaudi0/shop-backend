@@ -6,4 +6,5 @@ class User < ApplicationRecord
   has_many :cart_items, dependent: :destroy
   has_many :orders, dependent: :destroy
   has_many :products, foreign_key: :vendor_id, dependent: :nullify, inverse_of: :vendor
+  has_many :refresh_tokens, dependent: :destroy
 end

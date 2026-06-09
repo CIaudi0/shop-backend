@@ -1,11 +1,14 @@
 Rails.application.routes.draw do
-  get '/auth/google_oauth2/callback', to: 'callbacks#google_oauth2'
+  get    '/auth/google_oauth2/callback', to: 'callbacks#google_oauth2'
+  post   '/auth/refresh',               to: 'refresh_tokens#create'
+  delete '/auth/logout',                to: 'refresh_tokens#destroy'
+
   get "up" => "rails/health#show", as: :rails_health_check
 
   defaults format: :json do
     resources :products, only: [:index, :show]
     resources :orders, only: [:index, :show, :create]
-    
+
     namespace :admin do
       resources :users, only: [:update, :destroy, :index]
     end
@@ -15,10 +18,10 @@ Rails.application.routes.draw do
     end
 
     resource :cart, only: [:show] do
-      post 'add/:product_id', to: 'carts#add_item'
+      post   'add/:product_id',    to: 'carts#add_item'
       delete 'remove/:product_id', to: 'carts#remove_item'
-      patch 'update/:product_id', to: 'carts#update_item'
-      post 'cart/sync', to: 'carts#sync'
+      patch  'update/:product_id', to: 'carts#update_item'
+      post   'cart/sync',          to: 'carts#sync'
     end
   end
 end

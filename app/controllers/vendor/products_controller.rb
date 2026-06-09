@@ -38,6 +38,6 @@ class Vendor::ProductsController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:title, :description, :price, :original_price, :sale, :thumbnail)
+    params.require(:product).permit(:title, :description, :price, :original_price, :sale, :thumbnail, :stock)
   end
 end
